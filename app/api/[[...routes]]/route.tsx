@@ -28,7 +28,7 @@ app.frame('/', (c) => {
 })
 
 app.frame('/picker', (c) => {
-  const { inputText, status} = c
+  const { inputText = "", status} = c
   let imgURL ;
 
   let toMatchText = inputText.toLowerCase();
