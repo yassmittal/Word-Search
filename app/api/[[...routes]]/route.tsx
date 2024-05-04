@@ -2,6 +2,7 @@
 
 import { Button, Frog, TextInput } from 'frog'
 import { devtools } from 'frog/dev'
+import { pinata } from 'frog/hubs'
 // import { neynar } from 'frog/hubs'
 import { handle } from 'frog/next'
 import { serveStatic } from 'frog/serve-static'
@@ -11,14 +12,14 @@ const matchedWords = ["socrerer", "magician","warlock","cast","magic","alchemist
 const app = new Frog({
   assetsPath: '/',
   basePath: '/api',
+  // hub: pinata()
 })
-
 
 app.frame('/', (c) => {
   const { status } = c
   return c.res({
     action: "/picker",
-    image: "http://localhost:3000/game.jpg",
+    image: `${process.env.NEXT_PUBLIC_SITE_URL}/game.jpg`,
     intents: [
       <TextInput placeholder="Your Word..." />,
       <Button value="checkWord">Check Word</Button>,
@@ -28,7 +29,13 @@ app.frame('/', (c) => {
 })
 
 app.frame('/picker', (c) => {
-  const { inputText = "", status} = c
+
+  const {frameData , verified} = c;
+
+
+  const { inputText = "", status } = frameData || {};
+
+  if(verified){
   let imgURL ;
 
   let toMatchText = inputText.toLowerCase();
@@ -36,9 +43,9 @@ app.frame('/picker', (c) => {
   const isYouWon = matchedWords.includes(toMatchText);
 
   if(isYouWon){
-    imgURL = "http://localhost:3000/WinImg.png";
+    imgURL = `${process.env.NEXT_PUBLIC_SITE_URL}/WinImg.png`;
   }else{
-    imgURL = "http://localhost:3000/looseImg.png";
+    imgURL = `${process.env.NEXT_PUBLIC_SITE_URL}/looseImg.png`;
   }
   return c.res({
     image: imgURL,
@@ -47,6 +54,23 @@ app.frame('/picker', (c) => {
       status === 'response' && <Button.Reset>Back</Button.Reset>,
     ],
   })
+}else{
+  return c.res({
+    action: "/",
+    image: (
+      <div style={{fontSize: "40px", color: "white" , display: "flex" , justifyContent: "center" , alignItems: "center" , height: "100%" , background: "black"}}>
+        <p>
+        Invalid User, I guess your are not signed in.
+        </p>
+      </div>
+    ),
+    intents: [
+      <Button>Try Again</Button>
+    ],
+  })
+
+}
+
 })
 
 devtools(app, { serveStatic })
