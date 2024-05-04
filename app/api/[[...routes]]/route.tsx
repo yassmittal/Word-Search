@@ -30,10 +30,10 @@ app.frame('/', (c) => {
 
 app.frame('/picker', (c) => {
 
-  const {frameData , verified} = c;
+  const {frameData , verified , status} = c;
 
 
-  const { inputText = "", status } = frameData || {};
+  const { inputText = "" } = frameData || {};
 
   if(verified){
   let imgURL ;
