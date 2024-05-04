@@ -12,7 +12,7 @@ const matchedWords = ["socrerer", "magician","warlock","cast","magic","alchemist
 const app = new Frog({
   assetsPath: '/',
   basePath: '/api',
-  // hub: pinata()
+  hub: pinata()
 })
 
 app.frame('/', (c) => {
